@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Financials Input</title>
+    <script>
+        window.onload = function() {
+            document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        };
+    </script>
+</head>
+<body>
+    <a href="index.html">Home</a>
+    <h2>Daily Financials Input</h2>
+    <!-- Need to change the following action after I set up the webserver -->
+    <form action="submit-financials.php" method="post">
+        <label for="date">Today's Date:</label><br>
+        <input type="date" id="date" name="date" required><br><br>
+
+        <fieldset>
+            <legend>POS A</legend>
+            <label for="posA-tendered">Tendered:</label><br>
+            <input type="number" id="posA-tendered" name="posA-tendered" step="0.01" required><br>
+            <label for="posA-deposit">Deposit:</label><br>
+            <input type="number" id="posA-deposit" name="posA-deposit" step="0.01" required><br>
+        </fieldset><br>
+
+        <fieldset>
+            <legend>POS B</legend>
+            <label for="posB-tendered">Tendered:</label><br>
+            <input type="number" id="posB-tendered" name="posB-tendered" step="0.01" required><br>
+            <label for="posB-deposit">Deposit:</label><br>
+            <input type="number" id="posB-deposit" name="posB-deposit" step="0.01" required><br>
+        </fieldset><br>
+
+        <fieldset>
+            <legend>POS C</legend>
+            <label for="posC-tendered">Tendered:</label><br>
+            <input type="number" id="posC-tendered" name="posC-tendered" step="0.01" required><br>
+            <label for="posC-deposit">Deposit:</label><br>
+            <input type="number" id="posC-deposit" name="posC-deposit" step="0.01" required><br>
+        </fieldset><br>
+
+        <input type="submit" value="Submit Financials">
+    </form>
+</body>
+</html>

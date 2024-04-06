@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Time Off Requests</title>
+</head>
+<body>
+    <h2>Search Time Off Requests</h2>
+    <form action="/search-timeoff" method="get">
+        <label for="employeeName">Employee's Name (optional):</label><br>
+        <input type="text" id="employeeName" name="employeeName"><br><br>
+
+        <label for="startDate">Start Date:</label><br>
+        <input type="date" id="startDate" name="startDate" required><br><br>
+
+        <label for="endDate">End Date:</label><br>
+        <input type="date" id="endDate" name="endDate" required><br><br>
+
+        <input type="submit" value="Search">
+    </form>
+</body>
+</html>

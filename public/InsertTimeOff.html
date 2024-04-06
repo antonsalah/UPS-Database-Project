@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Off Request Form</title>
+    <script>
+        function validateDates(event) {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('End date must be after the start date.');
+                event.preventDefault(); // Prevent form submission
+            }
+        }
+    </script>
+</head>
+<body>
+    <a href="index.html">Home</a>
+    <h2>Time Off Request Form</h2>
+    <form onsubmit="validateDates(event)">
+        <label for="firstName">First Name:</label><br>
+        <input type="text" id="firstName" name="firstName" required><br>
+        
+        <label for="lastName">Last Name:</label><br>
+        <input type="text" id="lastName" name="lastName" required><br>
+        
+        <label for="startDate">Start Date:</label><br>
+        <input type="date" id="startDate" name="startDate" required><br>
+        
+        <label for="endDate">End Date:</label><br>
+        <input type="date" id="endDate" name="endDate" required><br>
+        <br>
+        
+        <input type="submit" id="submitButton" value="Submit Request">
+    </form>
+</body>
+</html>
+
