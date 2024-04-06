@@ -1,9 +1,50 @@
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Hours Query</title>
+</head>
+<body>
+    <a href="index.html">Home</a>
+    <h2>Query Employee Hours Worked</h2>
+    <form id="hoursQueryForm">
+        <div>
+            <label for="employeeNumber">Employee Number:</label><br>
+            <input type="text" id="employeeNumber" name="employeeNumber"><br><br>
+        </div>
+        
+        <div>OR</div>
+        
+        <div>
+            <label for="firstName">First Name:</label><br>
+            <input type="text" id="firstName" name="firstName"><br><br>
+            
+            <label for="lastName">Last Name:</label><br>
+            <input type="text" id="lastName" name="lastName"><br><br>
+        </div>
+        
+        <label for="startDate">Start Date:</label><br>
+        <input type="date" id="startDate" name="startDate" required><br><br>
 
-    </head>
-    <body>
-        <a href = "index.html">Home</a>
-        <h1>This is the Page to see employee hours</h1>
-    </body>
+        <label for="endDate">End Date:</label><br>
+        <input type="date" id="endDate" name="endDate" required><br><br>
+
+        <input type="button" value="Query Hours" onclick="queryEmployeeHours()">
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        function queryEmployeeHours() {
+            const formData = new FormData(document.getElementById('hoursQueryForm'));
+            const data = Object.fromEntries(formData.entries());
+
+            // Example: Send data to your server via fetch() and update the #results div with the response
+            console.log('Sending query for:', data);
+            // The actual fetch() call to your backend goes here
+            // After fetching, update the #results div with the fetched data
+        }
+    </script>
+</body>
 </html>

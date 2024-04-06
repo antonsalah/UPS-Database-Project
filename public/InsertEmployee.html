@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Employee</title>
+</head>
+<body>
+    <a href="index.html">Home</a>
+    <h2>Add New Employee</h2>
+    <form id="newEmployeeForm">
+        <label for="firstName">First Name:</label><br>
+        <input type="text" id="firstName" name="firstName" required><br><br>
+        
+        <label for="lastName">Last Name:</label><br>
+        <input type="text" id="lastName" name="lastName" required><br><br>
+        
+        <label for="payRate">Pay Rate:</label><br>
+        <input type="number" id="payRate" name="payRate" step="0.01" required><br><br>
+        
+        <input type="button" value="Add Employee" onclick="addNewEmployee()">
+    </form>
+
+    <div id="addResult"></div>
+
+    <script>
+        function addNewEmployee() {
+            const form = document.getElementById('newEmployeeForm');
+            const formData = new FormData(form);
+
+            fetch('/add-employee', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Assuming the server responds with { employeeNumber: "XYZ" }
+                document.getElementById('addResult').textContent = 
+                    `New employee added. Employee Number: ${data.employeeNumber}`;
+            })
+            .catch(error => {
+                console.error('Error adding employee:', error);
+                document.getElementById('addResult').textContent = 'Failed to add employee.';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,9 +1,44 @@
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Query</title>
+</head>
+<body>
+    <a href="index.html">Home</a>
+    <h2>POS Query Form</h2>
+    <form id="posQueryForm">
+        <label for="posSelect">Select POS:</label>
+        <select id="posSelect" name="posSelect">
+            <option value="A">POS A</option>
+            <option value="B">POS B</option>
+            <option value="C">POS C</option>
+            <option value="ALL">ALL</option>
+        </select><br><br>
 
-    </head>
-    <body>
-        <a href = "index.html">Home</a>
-        <h1>This is the Page to see sales data</h1>
-    </body>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required><br><br>
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" required><br><br>
+
+        <input type="button" value="Query POS" onclick="queryPOS()">
+    </form>
+
+    <div id="queryResults"></div>
+
+    <script>
+        function queryPOS() {
+            const form = document.getElementById('posQueryForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Example: Send data to your server via fetch() and display results
+            console.log('Querying POS with:', data);
+            // Assume your backend endpoint is '/query-pos'
+            // Replace with actual fetch() call to retrieve and display query results
+        }
+    </script>
+</body>
 </html>

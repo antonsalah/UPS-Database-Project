@@ -1,9 +1,59 @@
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculate Employee Pay</title>
+</head>
+<body>
+    <a href="index.html">Home</a>
+    <h2>Calculate Employee Pay</h2>
+    <form id="payCalculationForm">
+        <label for="employeeID">Employee ID (if known):</label><br>
+        <input type="text" id="employeeID" name="employeeID"><br><br>
+        
+        <label for="firstName">First Name:</label><br>
+        <input type="text" id="firstName" name="firstName"><br><br>
+        
+        <label for="lastName">Last Name:</label><br>
+        <input type="text" id="lastName" name="lastName"><br><br>
+        
+        <label for="startDate">Pay Period Start Date:</label><br>
+        <input type="date" id="startDate" name="startDate" required><br><br>
 
-    </head>
-    <body>
-        <a href = "index.html">Home</a>
-        <h1>This is the Page to calculate an employee's pay</h1>
-    </body>
+        <label for="endDate">Pay Period End Date:</label><br>
+        <input type="date" id="endDate" name="endDate" required><br><br>
+
+        <input type="button" value="Calculate Pay" onclick="calculateEmployeePay()">
+    </form>
+
+    <div id="payCalculationResult"></div>
+
+    <script>
+        function calculateEmployeePay() {
+            const formData = new FormData(document.getElementById('payCalculationForm'));
+            const data = Object.fromEntries(formData.entries());
+
+            // Simulating a fetch call - replace with your actual server endpoint
+            console.log('Calculating pay for:', data);
+
+            // Fetch call to your backend would go here. For now, let's simulate the calculation.
+            // Simulate fetch response
+            const hoursWorked = 45; // Example total hours worked in the period
+            const payRate = 20; // Example pay rate
+            const regularHours = hoursWorked > 40 ? 40 : hoursWorked;
+            const overtimeHours = hoursWorked > 40 ? hoursWorked - 40 : 0;
+            const regularPay = regularHours * payRate;
+            const overtimePay = overtimeHours * payRate * 1.5;
+            const totalPay = regularPay + overtimePay;
+
+            // Display the calculation result
+            document.getElementById('payCalculationResult').innerHTML = 
+                `Total Hours: ${hoursWorked}<br>` +
+                `Regular Hours: ${regularHours} (at $${payRate}/hr): $${regularPay.toFixed(2)}<br>` +
+                `Overtime Hours: ${overtimeHours} (at $${(payRate * 1.5).toFixed(2)}/hr): $${overtimePay.toFixed(2)}<br>` +
+                `<strong>Total Pay: $${totalPay.toFixed(2)}</strong>`;
+        }
+    </script>
+</body>
 </html>
