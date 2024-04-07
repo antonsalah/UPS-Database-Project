@@ -2,39 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Off Request Form</title>
-    <script>
-        function validateDates(event) {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-
-            if (new Date(startDate) > new Date(endDate)) {
-                alert('End date must be after the start date.');
-                event.preventDefault(); // Prevent form submission
-            }
-        }
-    </script>
+    <title>Schedule Time Off</title>
 </head>
 <body>
-    <a href="index.html">Home</a>
-    <h2>Time Off Request Form</h2>
-    <form onsubmit="validateDates(event)">
-        <label for="firstName">First Name:</label><br>
-        <input type="text" id="firstName" name="firstName" required><br>
-        
-        <label for="lastName">Last Name:</label><br>
-        <input type="text" id="lastName" name="lastName" required><br>
-        
-        <label for="startDate">Start Date:</label><br>
-        <input type="date" id="startDate" name="startDate" required><br>
-        
-        <label for="endDate">End Date:</label><br>
-        <input type="date" id="endDate" name="endDate" required><br>
-        <br>
-        
-        <input type="submit" id="submitButton" value="Submit Request">
+    <h2>Schedule Time Off</h2>
+    <form id="timeOffForm">
+        <input type="text" id="employeeID" name="employeeID" placeholder="Employee ID" required><br>
+        <input type="date" id="dayOffStart" name="dayOffStart" required><br>
+        <input type="date" id="dayOffEnd" name="dayOffEnd" required><br>
+        <input type="number" id="numberOfDays" name="numberOfDays" placeholder="Number of Days" required><br>
+        <input type="button" value="Submit" onclick="scheduleTimeOff()">
     </form>
+    <div id="result"></div>
+
+    <script>
+        function scheduleTimeOff() {
+    const form = document.getElementById('timeOffForm');
+    const formData = {
+        employeeID: form.employeeID.value,
+        dayOffStart: form.dayOffStart.value,
+        dayOffEnd: form.dayOffEnd.value,
+        numberOfDays: form.numberOfDays.value
+    };
+
+    fetch('/schedule-timeoff', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('result').textContent = data.message;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').textContent = 'Failed to schedule time off.';
+    });
+}
+    </script>
 </body>
 </html>
+
 

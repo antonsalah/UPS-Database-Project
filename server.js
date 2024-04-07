@@ -28,9 +28,18 @@ app.post('/log-hours', (req, res) => {
 });
 
 app.post('/schedule-timeoff', (req, res) => {
-    // Placeholder: Logic to schedule employee time off
-    res.json({ message: "Time off scheduled successfully", data: req.body });
+  const { employeeID, dayOffStart, dayOffEnd, numberOfDays } = req.body;
+  const sql = `INSERT INTO time_off (EmployeeID, DayOffStart, DayOffEnd, NumberOfDays) VALUES (?, ?, ?, ?)`;
+
+  db.query(sql, [employeeID, dayOffStart, dayOffEnd, numberOfDays], (error, results) => {
+    if (error) {
+      console.error('Error scheduling time off:', error);
+      return res.status(500).json({ message: "Failed to schedule time off", error: error.message });
+    }
+    res.json({ message: "Time off scheduled successfully", timeOffID: results.insertId });
+  });
 });
+
 
 app.post('/input-financials', (req, res) => {
     // Placeholder: Logic to input financials
