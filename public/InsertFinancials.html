@@ -43,40 +43,42 @@
 
         <input type="button" value="Submit Financials" onclick="submitFinancials()">
     </form>
+    <div id="submissionStatus"></div>
+
 </body>
 <script>
     function submitFinancials() {
-        const form = document.getElementById('financialsForm');
-        const data = {
-            date: form.querySelector('#date').value,
-            posA: {
-                tendered: form.querySelector('#posA-tendered').value,
-                deposit: form.querySelector('#posA-deposit').value
-            },
-            posB: {
-                tendered: form.querySelector('#posB-tendered').value,
-                deposit: form.querySelector('#posB-deposit').value
-            },
-            posC: {
-                tendered: form.querySelector('#posC-tendered').value,
-                deposit: form.querySelector('#posC-deposit').value
-            }
-        };
-    
-        fetch('/submit-financials', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('Financials submitted successfully');
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            alert('Failed to submit financials');
-        });
-    }
+    const form = document.getElementById('financialsForm');
+    const data = {
+        date: form.querySelector('#date').value,
+        posA: {
+            tendered: form.querySelector('#posA-tendered').value,
+            deposit: form.querySelector('#posA-deposit').value
+        },
+        posB: {
+            tendered: form.querySelector('#posB-tendered').value,
+            deposit: form.querySelector('#posB-deposit').value
+        },
+        posC: {
+            tendered: form.querySelector('#posC-tendered').value,
+            deposit: form.querySelector('#posC-deposit').value
+        }
+    };
+
+    fetch('/submit-financials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('submissionStatus').innerHTML = '<p style="color: green;">Financials submitted successfully</p>';
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        document.getElementById('submissionStatus').innerHTML = '<p style="color: red;">Failed to submit financials</p>';
+    });
+}
     </script>
     
 </html>
