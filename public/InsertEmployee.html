@@ -27,22 +27,31 @@
         function addNewEmployee() {
             const form = document.getElementById('newEmployeeForm');
             const formData = new FormData(form);
-
+            const jsonData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                payRate: formData.get('payRate')
+            };
+    
             fetch('/add-employee', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData)
             })
             .then(response => response.json())
             .then(data => {
-                // Assuming the server responds with { employeeNumber: "XYZ" }
                 document.getElementById('addResult').textContent = 
                     `New employee added. Employee Number: ${data.employeeNumber}`;
             })
             .catch(error => {
                 console.error('Error adding employee:', error);
-                document.getElementById('addResult').textContent = 'Failed to add employee.';
+                document.getElementById('addResult').textContent = `New employee added. Employee Number: ${data.employeeNumber}`;
+
             });
         }
     </script>
+    
 </body>
 </html>
