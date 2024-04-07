@@ -46,6 +46,36 @@ app.post('/input-financials', (req, res) => {
     res.json({ message: "Financials inputted successfully", data: req.body });
 });
 
+app.get('/search-timeoff', (req, res) => {
+  const { startDate, endDate, firstName, lastName } = req.query;
+  
+  let sql = `SELECT e.FirstName, e.LastName, t.DayOffStart, t.DayOffEnd
+             FROM time_off t
+             JOIN employee e ON t.EmployeeID = e.EmployeeID
+             WHERE t.DayOffStart <= ? AND t.DayOffEnd >= ?`;
+
+  const params = [endDate, startDate];
+
+  if (firstName) {
+      sql += " AND e.FirstName LIKE ?";
+      params.push(`%${firstName}%`);
+  }
+  if (lastName) {
+      sql += " AND e.LastName LIKE ?";
+      params.push(`%${lastName}%`);
+  }
+
+  db.query(sql, params, (error, results) => {
+      if (error) {
+          console.error('Error fetching time off:', error);
+          return res.status(500).json({ message: "Failed to fetch time off" });
+      }
+      res.json(results);
+  });
+});
+
+
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

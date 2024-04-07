@@ -8,17 +8,51 @@
 <body>
     <a href="index.html">Home</a>
     <h2>Search Time Off Requests</h2>
-    <form action="/search-timeoff" method="get">
-        <label for="employeeName">Employee's Name (optional):</label><br>
-        <input type="text" id="employeeName" name="employeeName"><br><br>
-
+    <form id="searchTimeOffForm">
+        <label for="firstName">First Name (optional):</label><br>
+        <input type="text" id="firstName" name="firstName"><br><br>
+    
+        <label for="lastName">Last Name (optional):</label><br>
+        <input type="text" id="lastName" name="lastName"><br><br>
+    
         <label for="startDate">Start Date:</label><br>
         <input type="date" id="startDate" name="startDate" required><br><br>
-
+    
         <label for="endDate">End Date:</label><br>
         <input type="date" id="endDate" name="endDate" required><br><br>
-
-        <input type="submit" value="Search">
+    
+        <input type="button" value="Search" onclick="searchTimeOff()">
     </form>
+    <div id="searchResults"></div>
+    
+    
 </body>
+<script>function searchTimeOff() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const firstName = document.getElementById('firstName').value; // Optional
+    const lastName = document.getElementById('lastName').value; // Optional
+
+    // Construct the query parameters based on form inputs
+    const queryParams = new URLSearchParams({ startDate, endDate, firstName, lastName }).toString();
+
+    fetch(`/search-timeoff?${queryParams}`)
+    .then(response => response.json())
+    .then(data => {
+        const resultsContainer = document.getElementById('searchResults');
+        resultsContainer.innerHTML = ''; // Clear previous results
+
+        if (data.length === 0) {
+            resultsContainer.innerHTML = '<p>No time off has been scheduled for the specified dates.</p>';
+        } else {
+            data.forEach(item => {
+                const start = new Date(item.DayOffStart).toLocaleDateString();
+                const end = new Date(item.DayOffEnd).toLocaleDateString();
+                resultsContainer.innerHTML += `<p>${item.FirstName} ${item.LastName} - From ${start} to ${end}</p>`;
+            });
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
 </html>
