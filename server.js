@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('./database'); // Adjust the path based on your project structure
+const db = require('./database');
 const app = express();
 const port = 3000;
 
@@ -16,7 +16,7 @@ app.post('/add-employee', (req, res) => {
         console.error(error);
         return res.status(500).json({ message: "Error adding employee", error: error.message });
       }
-      // Ensure this line correctly returns the insertId
+      // returns the insertId
       res.status(201).json({ message: "Employee added successfully", employeeNumber: results.insertId });
 
     });
