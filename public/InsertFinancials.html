@@ -13,8 +13,7 @@
 <body>
     <a href="index.html">Home</a>
     <h2>Daily Financials Input</h2>
-    <!-- Need to change the following action after I set up the webserver -->
-    <form action="submit-financials.php" method="post">
+    <form id="financialsForm">
         <label for="date">Today's Date:</label><br>
         <input type="date" id="date" name="date" required><br><br>
 
@@ -42,7 +41,42 @@
             <input type="number" id="posC-deposit" name="posC-deposit" step="0.01" required><br>
         </fieldset><br>
 
-        <input type="submit" value="Submit Financials">
+        <input type="button" value="Submit Financials" onclick="submitFinancials()">
     </form>
 </body>
+<script>
+    function submitFinancials() {
+        const form = document.getElementById('financialsForm');
+        const data = {
+            date: form.querySelector('#date').value,
+            posA: {
+                tendered: form.querySelector('#posA-tendered').value,
+                deposit: form.querySelector('#posA-deposit').value
+            },
+            posB: {
+                tendered: form.querySelector('#posB-tendered').value,
+                deposit: form.querySelector('#posB-deposit').value
+            },
+            posC: {
+                tendered: form.querySelector('#posC-tendered').value,
+                deposit: form.querySelector('#posC-deposit').value
+            }
+        };
+    
+        fetch('/submit-financials', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Financials submitted successfully');
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Failed to submit financials');
+        });
+    }
+    </script>
+    
 </html>

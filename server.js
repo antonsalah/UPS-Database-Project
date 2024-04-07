@@ -41,10 +41,31 @@ app.post('/schedule-timeoff', (req, res) => {
 });
 
 
-app.post('/input-financials', (req, res) => {
-    // Placeholder: Logic to input financials
-    res.json({ message: "Financials inputted successfully", data: req.body });
+app.post('/submit-financials', (req, res) => {
+  const { date, posA, posB, posC } = req.body;
+  // Define an array of POS data to streamline inserts
+  const posEntries = [
+      { ...posA, pointOfService: 'A' },
+      { ...posB, pointOfService: 'B' },
+      { ...posC, pointOfService: 'C' }
+  ];
+
+  const sql = 'INSERT INTO financial (Date, PointOfService, Tendered, Deposit) VALUES ?';
+
+  // Transform posEntries to match the bulk insert format expected by MySQL
+  const values = posEntries.map(entry => [date, entry.pointOfService, entry.tendered, entry.deposit]);
+
+  // Perform a bulk insert
+  db.query(sql, [values], (error, results) => {
+      if (error) {
+          console.error('Error inserting financials:', error);
+          return res.status(500).json({ message: "Failed to insert financials", error: error.message });
+      }
+      res.json({ message: "Financials submitted successfully" });
+  });
 });
+
+
 
 app.get('/search-timeoff', (req, res) => {
   const { startDate, endDate, firstName, lastName } = req.query;
