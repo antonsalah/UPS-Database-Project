@@ -22,10 +22,60 @@ app.post('/add-employee', (req, res) => {
     });
   });
 
-app.post('/log-hours', (req, res) => {
-    // Placeholder: Logic to log employee hours
-    res.json({ message: "Hours logged successfully", data: req.body });
+  app.post('/query-employee-hours', (req, res) => {
+    const { employeeNumber, firstName, lastName, startDate, endDate } = req.body;
+
+    // Initialize the SQL query to select from the pay_rate table and optionally join with the employee table.
+    let sql = `SELECT e.FirstName, e.LastName, pr.Date as WorkDate, pr.HoursWorked, pr.NotariesSigned, pr.MailboxesOpened
+               FROM pay_rate pr
+               JOIN employee e ON pr.EmployeeID = e.EmployeeID
+               WHERE 1=1`;
+
+    // Initialize parameters array for SQL query placeholders
+    const params = [];
+
+    // Add conditions based on provided startDate and endDate
+    if (startDate) {
+        sql += " AND pr.Date >= ?";
+        params.push(startDate);
+    }
+    if (endDate) {
+        sql += " AND pr.Date <= ?";
+        params.push(endDate);
+    } else {
+        // If no endDate is provided, use startDate as endDate to query for a single day
+        if (startDate) {
+            sql += " AND pr.Date <= ?";
+            params.push(startDate);
+        }
+    }
+
+    // Add conditions based on provided employeeNumber, firstName, or lastName
+    if (employeeNumber) {
+        sql += " AND e.EmployeeID = ?";
+        params.push(employeeNumber);
+    }
+    if (firstName) {
+        sql += " AND e.FirstName LIKE ?";
+        params.push(`%${firstName}%`);
+    }
+    if (lastName) {
+        sql += " AND e.LastName LIKE ?";
+        params.push(`%${lastName}%`);
+    }
+
+    // Execute the query with the constructed SQL string and parameters
+    db.query(sql, params, (error, results) => {
+        if (error) {
+            console.error('Error querying employee hours:', error);
+            return res.status(500).json({ message: "Failed to query employee hours", error: error.message });
+        }
+        // Send query results back to the client
+        res.json(results);
+    });
 });
+
+
 
 app.post('/schedule-timeoff', (req, res) => {
   const { employeeID, dayOffStart, dayOffEnd, numberOfDays } = req.body;

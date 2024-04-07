@@ -39,12 +39,33 @@
         function queryEmployeeHours() {
             const formData = new FormData(document.getElementById('hoursQueryForm'));
             const data = Object.fromEntries(formData.entries());
-
-            // Example: Send data to your server via fetch() and update the #results div with the response
-            console.log('Sending query for:', data);
-            // The actual fetch() call to your backend goes here
-            // After fetching, update the #results div with the fetched data
+    
+            fetch('/query-employee-hours', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = ''; // Clear previous results
+                
+                if(data.length > 0) {
+                    data.forEach((entry) => {
+                        resultsDiv.innerHTML += `<p>${entry.FirstName} ${entry.LastName} - Hours Worked: ${entry.HoursWorked}, Notaries Signed: ${entry.NotariesSigned}, Mailboxes Opened: ${entry.MailboxesOpened} on ${new Date(entry.WorkDate).toLocaleDateString()}</p>`;
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p>No hours recorded for this period.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = 'Failed to query hours.';
+            });
         }
     </script>
+    
 </body>
 </html>
