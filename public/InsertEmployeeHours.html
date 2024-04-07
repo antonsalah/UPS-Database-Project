@@ -9,53 +9,55 @@
     <a href="index.html">Home</a>
     <h2>Record Daily Work Hours</h2>
     <form id="workHoursForm">
-        <label for="employeeID">Employee ID (if known):</label><br>
-        <input type="text" id="employeeID" name="employeeID"><br><br>
+        <label for="employeeID">Employee ID:</label><br>
+        <input type="text" id="employeeID" name="employeeID" required><br><br>
         
-        <label for="firstName">First Name:</label><br>
-        <input type="text" id="firstName" name="firstName"><br><br>
-        
-        <label for="lastName">Last Name:</label><br>
-        <input type="text" id="lastName" name="lastName"><br><br>
+        <label for="date">Date of Work:</label><br>
+        <input type="date" id="date" name="date" required><br><br>
         
         <label for="hoursWorked">Hours Worked:</label><br>
         <input type="number" id="hoursWorked" name="hoursWorked" step="0.1" min="0" required><br><br>
         
-        <label for="workDate">Date of Work:</label><br>
-        <input type="date" id="workDate" name="workDate" required><br><br>
-
+        <label for="notariesSigned">Notaries Signed:</label><br>
+        <input type="number" id="notariesSigned" name="notariesSigned" step="1" min="0" required><br><br>
+        
+        <label for="mailboxesOpened">Mailboxes Opened:</label><br>
+        <input type="number" id="mailboxesOpened" name="mailboxesOpened" step="1" min="0" required><br><br>
+    
         <input type="button" value="Submit Hours" onclick="submitWorkHours()">
     </form>
-
+    
     <div id="submitResult"></div>
 
     <script>
-        function submitWorkHours() {
-            const formData = new FormData(document.getElementById('workHoursForm'));
-            // Convert FormData to an object that can be sent as JSON
-            const data = Object.fromEntries(formData.entries());
+function submitWorkHours() {
+    const form = document.getElementById('workHoursForm');
+    const formData = {
+        employeeID: form.querySelector('#employeeID').value,
+        date: form.querySelector('#date').value,
+        hoursWorked: form.querySelector('#hoursWorked').value,
+        notariesSigned: form.querySelector('#notariesSigned').value,
+        mailboxesOpened: form.querySelector('#mailboxesOpened').value
+    };
 
-            fetch('/submit-work-hours', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Network response was not ok.');
-            })
-            .then(data => {
-                document.getElementById('submitResult').textContent = 'Hours successfully recorded!';
-            })
-            .catch(error => {
-                console.error('Error recording hours:', error);
-                document.getElementById('submitResult').textContent = 'Failed to record hours.';
-            });
-        }
+    fetch('/submit-work-hours', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('submitResult').textContent = 'Hours successfully recorded!';
+        document.getElementById('submitResult').className = 'success'; // Ensure these classes are defined in your CSS
+        form.reset(); // Reset form for next entry
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('submitResult').textContent = 'Failed to record hours.';
+        document.getElementById('submitResult').className = 'error'; // Ensure these classes are defined in your CSS
+    });
+}
+
     </script>
 </body>
 </html>

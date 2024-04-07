@@ -95,6 +95,20 @@ app.get('/search-timeoff', (req, res) => {
   });
 });
 
+app.post('/submit-work-hours', (req, res) => {
+  const { employeeID, date, hoursWorked, notariesSigned, mailboxesOpened } = req.body;
+
+  const sql = `INSERT INTO pay_rate (EmployeeID, Date, HoursWorked, NotariesSigned, MailboxesOpened) VALUES (?, ?, ?, ?, ?)`;
+
+  db.query(sql, [employeeID, date, hoursWorked, notariesSigned, mailboxesOpened], (error, results) => {
+      if (error) {
+          console.error('Error inserting work hours:', error);
+          return res.status(500).json({ message: "Failed to record work hours", error: error.message });
+      }
+      res.json({ message: "Work hours successfully recorded" });
+  });
+});
+
 
 
 // Start the server
