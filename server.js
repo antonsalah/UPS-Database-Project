@@ -4,9 +4,8 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.use(express.static('public')); // Serve static files
+app.use(express.static('public'));
 
-// Endpoint to add a new employee
 app.post('/add-employee', (req, res) => {
     const { firstName, lastName, payRate } = req.body;
     const sql = `INSERT INTO employee (FirstName, LastName, PayRate) VALUES (?, ?, ?)`;
@@ -16,7 +15,6 @@ app.post('/add-employee', (req, res) => {
         console.error(error);
         return res.status(500).json({ message: "Error adding employee", error: error.message });
       }
-      // returns the insertId
       res.status(201).json({ message: "Employee added successfully", employeeNumber: results.insertId });
 
     });
@@ -25,16 +23,12 @@ app.post('/add-employee', (req, res) => {
   app.post('/query-employee-hours', (req, res) => {
     const { employeeNumber, firstName, lastName, startDate, endDate } = req.body;
 
-    // Initialize the SQL query to select from the pay_rate table and optionally join with the employee table.
     let sql = `SELECT e.FirstName, e.LastName, pr.Date as WorkDate, pr.HoursWorked, pr.NotariesSigned, pr.MailboxesOpened
                FROM pay_rate pr
                JOIN employee e ON pr.EmployeeID = e.EmployeeID
                WHERE 1=1`;
 
-    // Initialize parameters array for SQL query placeholders
     const params = [];
-
-    // Add conditions based on provided startDate and endDate
     if (startDate) {
         sql += " AND pr.Date >= ?";
         params.push(startDate);
@@ -43,14 +37,11 @@ app.post('/add-employee', (req, res) => {
         sql += " AND pr.Date <= ?";
         params.push(endDate);
     } else {
-        // If no endDate is provided, use startDate as endDate to query for a single day
         if (startDate) {
             sql += " AND pr.Date <= ?";
             params.push(startDate);
         }
     }
-
-    // Add conditions based on provided employeeNumber, firstName, or lastName
     if (employeeNumber) {
         sql += " AND e.EmployeeID = ?";
         params.push(employeeNumber);
@@ -63,14 +54,11 @@ app.post('/add-employee', (req, res) => {
         sql += " AND e.LastName LIKE ?";
         params.push(`%${lastName}%`);
     }
-
-    // Execute the query with the constructed SQL string and parameters
     db.query(sql, params, (error, results) => {
         if (error) {
             console.error('Error querying employee hours:', error);
             return res.status(500).json({ message: "Failed to query employee hours", error: error.message });
         }
-        // Send query results back to the client
         res.json(results);
     });
 });
