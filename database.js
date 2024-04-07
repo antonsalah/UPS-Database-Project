@@ -2,9 +2,9 @@ const mysql = require('mysql');
 
 // Create a connection to the database
 const dbConnection = mysql.createConnection({
-  host     : 'localhost', // or your database host
-  user     : 'root', // your database username
-  password : '', // your database password
+  host     : 'localhost', 
+  user     : 'root', 
+  password : '', 
   database : 'group project'
 });
 
