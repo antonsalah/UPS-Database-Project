@@ -30,15 +30,34 @@
 
     <script>
         function queryPOS() {
-            const form = document.getElementById('posQueryForm');
-            const formData = new FormData(form);
+            const formData = new FormData(document.getElementById('posQueryForm'));
             const data = Object.fromEntries(formData.entries());
-
-            // Example: Send data to your server via fetch() and display results
-            console.log('Querying POS with:', data);
-            // Assume your backend endpoint is '/query-pos'
-            // Replace with actual fetch() call to retrieve and display query results
+    
+            fetch('/query-pos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('queryResults');
+                resultsDiv.innerHTML = '';
+                if(data.length > 0) {
+                    data.forEach((entry) => {
+                        resultsDiv.innerHTML += `<p>POS: ${entry.PointOfService} - Date: ${new Date(entry.Date).toLocaleDateString()}, Tendered: ${entry.Tendered}, Deposit: ${entry.Deposit}</p>`;
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p>No results found for the selected POS and date range.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error querying POS:', error);
+                document.getElementById('queryResults').innerHTML = 'Failed to query POS data.';
+            });
         }
     </script>
+    
 </body>
 </html>

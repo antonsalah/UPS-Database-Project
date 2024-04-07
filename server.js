@@ -147,6 +147,26 @@ app.post('/submit-work-hours', (req, res) => {
   });
 });
 
+app.post('/query-pos', (req, res) => {
+  const { posSelect, startDate, endDate } = req.body;
+
+  let sql = `SELECT Date, PointOfService, Tendered, Deposit FROM financial WHERE Date >= ? AND Date <= ?`;
+  const params = [startDate, endDate];
+
+  if (posSelect !== 'ALL') {
+      sql += ' AND PointOfService = ?';
+      params.push(posSelect);
+  }
+
+  db.query(sql, params, (error, results) => {
+      if (error) {
+          console.error('Error querying financial data:', error);
+          return res.status(500).json({ message: "Failed to query financial data", error: error.message });
+      }
+      res.json(results);
+  });
+});
+
 
 
 // Start the server
