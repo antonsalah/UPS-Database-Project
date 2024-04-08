@@ -33,7 +33,6 @@
     const firstName = document.getElementById('firstName').value; // Optional
     const lastName = document.getElementById('lastName').value; // Optional
 
-    // Construct the query parameters based on form inputs
     const queryParams = new URLSearchParams({ startDate, endDate, firstName, lastName }).toString();
 
     fetch(`/search-timeoff?${queryParams}`)

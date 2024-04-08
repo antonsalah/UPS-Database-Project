@@ -6,6 +6,67 @@ const port = 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
+app.post('/calculate-pay', async (req, res) => {
+  const { employeeID, startDate, endDate } = req.body;
+
+  try {
+      const sql = `SELECT e.PayRate, pr.HoursWorked, pr.NotariesSigned, pr.MailboxesOpened
+                   FROM employee e
+                   JOIN pay_rate pr ON e.EmployeeID = pr.EmployeeID
+                   WHERE e.EmployeeID = ? AND pr.Date BETWEEN ? AND ?`;
+
+      db.query(sql, [employeeID, startDate, endDate], (error, results) => {
+          if (error) {
+              console.error('Error calculating pay:', error);
+              return res.status(500).json({ message: "Failed to calculate pay", error: error.message });
+          }
+          
+          console.log(results);
+
+          let totalRegularHours = 0;
+          let totalOvertimeHours = 0;
+          let totalWeeklyHours = 0;
+          let totalNotaries = 0;
+          let totalMailboxes = 0;
+
+          results.forEach(row => {
+              totalNotaries += row.NotariesSigned;
+              totalMailboxes += row.MailboxesOpened;
+              const dailyOvertime = row.HoursWorked > 8 ? row.HoursWorked - 8 : 0;
+              totalOvertimeHours += dailyOvertime;
+              totalWeeklyHours += row.HoursWorked;
+              totalRegularHours += row.HoursWorked - dailyOvertime;
+          });
+          if (totalWeeklyHours > 40) {
+              const weeklyOvertime = totalWeeklyHours - 40;
+              totalOvertimeHours += weeklyOvertime;
+              totalRegularHours -= weeklyOvertime;
+          }
+          const payRate = results.length > 0 ? results[0].PayRate : 0;
+          const regularPay = totalRegularHours * payRate;
+          const overtimePay = totalOvertimeHours * payRate * 1.5;
+          const bonusPay = (totalNotaries * 3) + (totalMailboxes * 5);
+          const totalPay = regularPay + overtimePay + bonusPay;
+
+          res.json({
+              totalHours: totalRegularHours + totalOvertimeHours,
+              regularHours: totalRegularHours,
+              overtimeHours: totalOvertimeHours,
+              regularPay,
+              overtimePay,
+              bonusPay,
+              totalPay
+          });
+      });
+  } catch (error) {
+      console.error('Server error:', error);
+      res.status(500).json({ message: "Server error calculating pay." });
+  }
+});
+
+
+
+
 app.post('/add-employee', (req, res) => {
     const { firstName, lastName, payRate } = req.body;
     const sql = `INSERT INTO employee (FirstName, LastName, PayRate) VALUES (?, ?, ?)`;
@@ -81,7 +142,6 @@ app.post('/schedule-timeoff', (req, res) => {
 
 app.post('/submit-financials', (req, res) => {
   const { date, posA, posB, posC } = req.body;
-  // Define an array of POS data to streamline inserts
   const posEntries = [
       { ...posA, pointOfService: 'A' },
       { ...posB, pointOfService: 'B' },
@@ -89,11 +149,8 @@ app.post('/submit-financials', (req, res) => {
   ];
 
   const sql = 'INSERT INTO financial (Date, PointOfService, Tendered, Deposit) VALUES ?';
-
-  // Transform posEntries to match the bulk insert format expected by MySQL
   const values = posEntries.map(entry => [date, entry.pointOfService, entry.tendered, entry.deposit]);
 
-  // Perform a bulk insert
   db.query(sql, [values], (error, results) => {
       if (error) {
           console.error('Error inserting financials:', error);
